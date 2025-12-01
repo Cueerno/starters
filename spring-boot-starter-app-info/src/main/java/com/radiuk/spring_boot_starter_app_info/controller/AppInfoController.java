@@ -1,33 +1,20 @@
 package com.radiuk.spring_boot_starter_app_info.controller;
 
-import com.radiuk.spring_boot_starter_app_info.properties.AppInfoProperties;
 import com.radiuk.spring_boot_starter_app_info.model.AppInfo;
-import org.springframework.core.env.Environment;
+import com.radiuk.spring_boot_starter_app_info.service.AppInfoService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Instant;
-import java.util.Arrays;
-
 @RestController
+@RequiredArgsConstructor
 public class AppInfoController {
 
-    private final AppInfoProperties properties;
-    private final Environment environment;
-    private final Instant startedAt = Instant.now();
-
-    public AppInfoController(AppInfoProperties properties, Environment environment) {
-        this.properties = properties;
-        this.environment = environment;
-    }
+    private final AppInfoService appInfoService;
 
     @GetMapping("/app/info")
-    public AppInfo getAppInfo() {
-        return new AppInfo(
-                properties.projectName(),
-                properties.version(),
-                startedAt,
-                Arrays.asList(environment.getActiveProfiles())
-        );
+    public ResponseEntity<AppInfo> getAppInfo() {
+        return ResponseEntity.ok(appInfoService.getAppInfo());
     }
 }

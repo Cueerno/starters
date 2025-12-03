@@ -6,6 +6,7 @@ import com.radiuk.spring_boot_starter_app_info.service.AppInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 
+import java.lang.management.ManagementFactory;
 import java.time.Instant;
 import java.util.Arrays;
 
@@ -18,11 +19,16 @@ public class AppInfoServiceImpl implements AppInfoService {
 
     @Override
     public AppInfo getAppInfo() {
+        long uptimeSeconds = ManagementFactory.getRuntimeMXBean().getUptime() / 1000;
+
         return new AppInfo(
-                properties.projectName(),
-                properties.version(),
+                properties.getProjectName(),
+                properties.getVersion(),
                 startedAt,
-                Arrays.asList(environment.getActiveProfiles())
+                Arrays.asList(environment.getActiveProfiles()),
+                System.getProperty("java.version"),
+                System.getProperty("os.name") + " " + System.getProperty("os.version"),
+                uptimeSeconds
         );
     }
 }

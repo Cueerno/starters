@@ -7,6 +7,8 @@ public record AppInfo(
         String projectName,
         String version,
         Instant startedAt,
-        List<String> activeProfiles
-) {
-}
+        List<String> activeProfiles,
+        String javaVersion,
+        String osName,
+        long uptimeSeconds
+) {}

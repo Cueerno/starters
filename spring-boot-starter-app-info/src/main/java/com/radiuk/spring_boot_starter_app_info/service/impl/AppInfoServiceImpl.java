@@ -5,12 +5,10 @@ import com.radiuk.spring_boot_starter_app_info.properties.AppInfoProperties;
 import com.radiuk.spring_boot_starter_app_info.service.AppInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Arrays;
 
-@Service
 @RequiredArgsConstructor
 public class AppInfoServiceImpl implements AppInfoService {
 

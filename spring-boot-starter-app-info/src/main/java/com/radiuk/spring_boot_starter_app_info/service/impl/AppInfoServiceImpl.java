@@ -1,27 +1,51 @@
 package com.radiuk.spring_boot_starter_app_info.service.impl;
 
 import com.radiuk.spring_boot_starter_app_info.model.AppInfo;
+import com.radiuk.spring_boot_starter_app_info.model.GCInfo;
 import com.radiuk.spring_boot_starter_app_info.properties.AppInfoProperties;
 import com.radiuk.spring_boot_starter_app_info.service.AppInfoService;
+import com.radiuk.spring_boot_starter_app_info.util.AppInfoUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.SpringBootVersion;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.ThreadMXBean;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class AppInfoServiceImpl implements AppInfoService {
 
+    private final Instant startedAt = Instant.now();
+
     private final AppInfoProperties properties;
     private final Environment environment;
-    private final Instant startedAt = Instant.now();
+    private final ApplicationContext applicationContext;
+
 
     @Override
     public AppInfo getAppInfo() {
-        long uptimeSeconds = ManagementFactory.getRuntimeMXBean().getUptime() / 1000;
+        Runtime runtime = Runtime.getRuntime();
+
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+
         long uptimeMs = ManagementFactory.getRuntimeMXBean().getUptime();
         long uptimeSeconds = uptimeMs / 1000;
+
+        ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+
+        List<GCInfo> gcInfoList = ManagementFactory.getGarbageCollectorMXBeans()
+                .stream()
+                .map(gc -> new GCInfo(
+                        gc.getName(),
+                        gc.getCollectionCount(),
+                        gc.getCollectionTime()
+                ))
+                .toList();
 
         return new AppInfo(
                 properties.getProjectName(),
@@ -30,9 +54,8 @@ public class AppInfoServiceImpl implements AppInfoService {
                 AppInfoUtil.formatUptime(uptimeSeconds),
                 uptimeSeconds,
                 Arrays.asList(environment.getActiveProfiles()),
+
                 System.getProperty("java.version"),
-                System.getProperty("os.name") + " " + System.getProperty("os.version"),
-                uptimeSeconds
                 System.getProperty("os.name"),
                 runtime.availableProcessors(),
                 AppInfoUtil.formatBytes(runtime.totalMemory() - runtime.freeMemory()),
@@ -40,6 +63,13 @@ public class AppInfoServiceImpl implements AppInfoService {
                 osBean.getAvailableProcessors(),
                 osBean.getSystemLoadAverage(),
 
+                gcInfoList,
+
+                threadBean.getThreadCount(),
+                threadBean.getDaemonThreadCount(),
+
+                SpringBootVersion.getVersion(),
+                applicationContext.getBeanDefinitionCount()
         );
     }
 }

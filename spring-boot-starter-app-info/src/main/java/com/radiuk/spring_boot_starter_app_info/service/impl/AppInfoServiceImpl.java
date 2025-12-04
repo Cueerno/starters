@@ -20,15 +20,26 @@ public class AppInfoServiceImpl implements AppInfoService {
     @Override
     public AppInfo getAppInfo() {
         long uptimeSeconds = ManagementFactory.getRuntimeMXBean().getUptime() / 1000;
+        long uptimeMs = ManagementFactory.getRuntimeMXBean().getUptime();
+        long uptimeSeconds = uptimeMs / 1000;
 
         return new AppInfo(
                 properties.getProjectName(),
                 properties.getVersion(),
                 startedAt,
+                AppInfoUtil.formatUptime(uptimeSeconds),
+                uptimeSeconds,
                 Arrays.asList(environment.getActiveProfiles()),
                 System.getProperty("java.version"),
                 System.getProperty("os.name") + " " + System.getProperty("os.version"),
                 uptimeSeconds
+                System.getProperty("os.name"),
+                runtime.availableProcessors(),
+                AppInfoUtil.formatBytes(runtime.totalMemory() - runtime.freeMemory()),
+                AppInfoUtil.formatBytes(runtime.maxMemory()),
+                osBean.getAvailableProcessors(),
+                osBean.getSystemLoadAverage(),
+
         );
     }
 }

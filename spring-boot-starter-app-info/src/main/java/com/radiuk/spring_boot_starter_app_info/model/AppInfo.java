@@ -7,8 +7,15 @@ public record AppInfo(
         String projectName,
         String version,
         Instant startedAt,
+        String uptimeFormatted,
+        long uptimeSeconds,
         List<String> activeProfiles,
         String javaVersion,
         String osName,
         long uptimeSeconds
+        int cpuCores,
+        String jvmUsedMemoryFormatted,
+        String jvmMaxMemoryFormatted,
+        double systemCpuLoad,
+        double systemLoadAverage,
 ) {}

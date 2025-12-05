@@ -26,5 +26,7 @@ public record AppInfo(
         int daemonThreadCount,
 
         String springBootVersion,
-        int beansCount
+        int beansCount,
+
+        WebServerInfo webServerInfo
 ) {}
